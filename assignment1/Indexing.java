@@ -45,7 +45,7 @@ public class Indexing
 		String indexLocation = "/home/rishabh/workspace/E0236/indexR/";
 		Path docDir = Paths.get(docLocation);
 		Directory iDir = FSDirectory.open(Paths.get(indexLocation)); 		//Creating Directory for storing index
-		Analyzer analyzer  = new StandardAnalyzer(); //MyAnalyzer();						//Selecting a particular type of analyzer to parse documents
+		Analyzer analyzer  = new MyAnalyzer();						//Selecting a particular type of analyzer to parse documents
 		IndexWriterConfig indexConfig = new IndexWriterConfig(analyzer);	//Contains the configuration of IndexWriter object(which is to be created)
 		
 		indexConfig.setOpenMode(OpenMode.CREATE);    						//with this configuration IndexWriter object will create a new Index

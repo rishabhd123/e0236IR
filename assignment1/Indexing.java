@@ -15,6 +15,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 //Lucene Packages
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.core.LowerCaseTokenizer;
+import org.apache.lucene.analysis.en.PorterStemFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.Document;
@@ -28,7 +31,13 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-public class Indexing {
+
+public class Indexing 
+{
+	
+	
+	
+	
 	
 	public static void main(String[] args) throws IOException
 	{
@@ -36,7 +45,7 @@ public class Indexing {
 		String indexLocation = "/home/rishabh/workspace/E0236/indexR/";
 		Path docDir = Paths.get(docLocation);
 		Directory iDir = FSDirectory.open(Paths.get(indexLocation)); 		//Creating Directory for storing index
-		Analyzer analyzer  = new StandardAnalyzer();						//Selecting a particular type of analyzer to parse documents
+		Analyzer analyzer  = new StandardAnalyzer(); //MyAnalyzer();						//Selecting a particular type of analyzer to parse documents
 		IndexWriterConfig indexConfig = new IndexWriterConfig(analyzer);	//Contains the configuration of IndexWriter object(which is to be created)
 		
 		indexConfig.setOpenMode(OpenMode.CREATE);    						//with this configuration IndexWriter object will create a new Index
@@ -44,6 +53,7 @@ public class Indexing {
 		
 		IndexWriter iWriter = new IndexWriter(iDir, indexConfig); 			//Create an IndexWrite object with given configuration "indexConfig"
 																			//iDir is the directory object of the location of index
+		System.out.println("Started");
 		indexDocuments(iWriter, docDir);
 		System.out.println("Finished Succussfully");
 		
@@ -90,6 +100,7 @@ public class Indexing {
 		{
 			//System.out.println("adding " + docDir);
 			writer.addDocument(doc);
+			
 		}
 		else 															//create or update index
 			writer.updateDocument(new Term("path", docDir.toString()), doc);	
@@ -99,5 +110,17 @@ public class Indexing {
 	
 	}
 	
+	
+	
 
 }
+class MyAnalyzer extends Analyzer{
+	@Override
+	protected TokenStreamComponents createComponents(String fieldName) {
+        Tokenizer source = new LowerCaseTokenizer();
+        return new TokenStreamComponents(source, new PorterStemFilter(source));
+      }
+}
+
+
+	

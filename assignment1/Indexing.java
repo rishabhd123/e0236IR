@@ -15,10 +15,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 //Lucene Packages
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.core.LowerCaseTokenizer;
-import org.apache.lucene.analysis.en.PorterStemFilter;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+//import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -34,10 +31,6 @@ import org.apache.lucene.store.FSDirectory;
 
 public class Indexing 
 {
-	
-	
-	
-	
 	
 	public static void main(String[] args) throws IOException
 	{
@@ -105,22 +98,11 @@ public class Indexing
 		else 															//create or update index
 			writer.updateDocument(new Term("path", docDir.toString()), doc);	
 		
-		
-		
-	
 	}
-	
-	
 	
 
 }
-class MyAnalyzer extends Analyzer{
-	@Override
-	protected TokenStreamComponents createComponents(String fieldName) {
-        Tokenizer source = new LowerCaseTokenizer();
-        return new TokenStreamComponents(source, new PorterStemFilter(source));
-      }
-}
+
 
 
 	

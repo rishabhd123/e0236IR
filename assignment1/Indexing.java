@@ -1,7 +1,9 @@
 package e0236IR.assignment1;
 
-//Java Essentials
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+//Java Essentials
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,10 +14,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import org.json.simple.*;
+import org.json.simple.parser.*;
 
 //Lucene Packages
 import org.apache.lucene.analysis.Analyzer;
-//import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -33,7 +36,8 @@ public class Indexing
 {
 	
 	public static void main(String[] args) throws IOException
-	{
+	{	
+		
 		String docLocation = "/home/rishabh/workspace/E0236/conda root/Text";	//Location of directory which contains the files to be indexed
 		String indexLocation = "/home/rishabh/workspace/E0236/indexR/";
 		Path docDir = Paths.get(docLocation);
@@ -49,6 +53,7 @@ public class Indexing
 		System.out.println("Started");
 		indexDocuments(iWriter, docDir);
 		System.out.println("Finished Succussfully");
+		iWriter.close();
 		
 		
 	}
@@ -70,24 +75,51 @@ public class Indexing
 		      });
 			
 		}
-		else indexDocuments(writer, docDir, Files.getLastModifiedTime(docDir).toMillis());
-			
+		else indexDocuments(writer, docDir, Files.getLastModifiedTime(docDir).toMillis());		//here docDir is not a directory but it is a path to the json file			
 		
 	}
 	
 	
 	static void indexDocuments(IndexWriter writer, Path docDir, long lastModified) throws IOException		//Indexes a single document
 	{	//Will enter here only when "docDir" refers to a file(not a directory)
-		InputStream stream = Files.newInputStream(docDir);					//Stream of a Document(file)
+		
+		
 		Document doc = new Document();
+		
+		String title=null;
+		String content=null;
+		try {
+			//Parsing .json file to retrieve the content and title
+			JSONParser jparser = new JSONParser();
+			JSONObject jobj = (JSONObject)jparser.parse(new FileReader(docDir.toString()));
+			title = ((JSONObject)jobj.get("parse")).get("title").toString();
+			content = ((JSONObject)jobj.get("parse")).get("wikitext").toString();
+			
+		} catch (Exception e) {
+			System.out.println("Exception in jsonparser");
+		}
+		
+		
+		//System.out.println(docDir.toString());
+		
 		Field pathField = new StringField("path", docDir.toString(), Field.Store.YES );
 		doc.add(pathField);
+		
+		Field titleField = new StringField("title", title, Field.Store.YES );
+		doc.add(titleField);
 		
 		Field time = new LongPoint("modified",lastModified);
 		doc.add(time);
 		
-		Field text = new TextField("content", new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
+		//**IMP** Part Read the comment
+		InputStream stream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));//*IMP* When i index the content as default string 
+		//--the size of index directory was very big because default string uses UTF-16 encoding so i just converted that string to InputStream Object
+		//--and created the index by first converting the string to UTF-8 encoding.Also we cant convert string to UTF-8 encoded string preserving give string
+		//--as default String.
+		Field text = new TextField("contents", new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
 		doc.add(text);
+		
+		
 		
 		if(writer.getConfig().getOpenMode() == OpenMode.CREATE)			//create new index
 		{
@@ -96,8 +128,8 @@ public class Indexing
 			
 		}
 		else 															//create or update index
-			writer.updateDocument(new Term("path", docDir.toString()), doc);	
-		
+			writer.updateDocument(new Term("path", docDir.toString()), doc);
+			//writer.deleteDocuments(new Term("path",docDir.toString()));		
 	}
 	
 

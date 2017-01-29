@@ -30,7 +30,7 @@ public class Searching {
     IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
     IndexSearcher searcher = new IndexSearcher(reader);
     Analyzer analyzer = new MyAnalyzer();
-
+    
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
     
     QueryParser parser = new QueryParser(field, analyzer);
@@ -84,8 +84,7 @@ public class Searching {
           }
         } else {
           System.out.println((i+1) + ". " + "No path for this document");
-        }
-                  
+        }                  
       }
 
       
@@ -94,12 +93,12 @@ public class Searching {
         while (true) {
           System.out.print("Press ");
           if (start - hitsPerPage >= 0) {
-            System.out.print("(p)revious page, ");  
+            System.out.print("p for previous page, ");  
           }
           if (start + hitsPerPage < numTotalHits) {
-            System.out.print("(n)ext page, ");
+            System.out.print("n for next page, ");
           }
-          System.out.println("(q)uit or enter number to jump to a page.");
+          System.out.println("q for quit or enter number to jump to a page.");
           
           String line = in.readLine();
           if (line.length() == 0 || line.charAt(0)=='q') {

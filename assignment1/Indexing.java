@@ -1,13 +1,8 @@
 package e0236IR.assignment1;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 //Java Essentials
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,9 +23,9 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+//import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-
 
 public class Indexing 
 {
@@ -39,18 +34,21 @@ public class Indexing
 	{	
 		
 		String docLocation = "/home/rishabh/workspace/E0236/conda root/Text";	//Location of directory which contains the files to be indexed
-		String indexLocation = "/home/rishabh/workspace/E0236/indexR/";
+		String indexLocation = "indexR";
 		Path docDir = Paths.get(docLocation);
 		Directory iDir = FSDirectory.open(Paths.get(indexLocation)); 		//Creating Directory for storing index
 		Analyzer analyzer  = new MyAnalyzer();						//Selecting a particular type of analyzer to parse documents
 		IndexWriterConfig indexConfig = new IndexWriterConfig(analyzer);	//Contains the configuration of IndexWriter object(which is to be created)
 		
+		
 		indexConfig.setOpenMode(OpenMode.CREATE);    						//with this configuration IndexWriter object will create a new Index
 		//indexConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);					//--------""-----------------
+		//indexConfig.setSimilarity(new ClassicSimilarity());
+		
 		
 		IndexWriter iWriter = new IndexWriter(iDir, indexConfig); 			//Create an IndexWrite object with given configuration "indexConfig"
-																			//iDir is the directory object of the location of index
-		System.out.println("Started");
+		//System.out.println(iWriter.getConfig().getSimilarity().toString());															//iDir is the directory object of the location of index
+		System.out.println("Indexing");
 		indexDocuments(iWriter, docDir);
 		System.out.println("Finished Succussfully");
 		iWriter.close();
@@ -111,14 +109,11 @@ public class Indexing
 		Field time = new LongPoint("modified",lastModified);
 		doc.add(time);
 		
-		//**IMP** Part Read the comment
-		InputStream stream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));//*IMP* When i index the content as default string 
-		//--the size of index directory was very big because default string uses UTF-16 encoding so i just converted that string to InputStream Object
-		//--and created the index by first converting the string to UTF-8 encoding.Also we cant convert string to UTF-8 encoded string preserving give string
-		//--as default String.
-		Field text = new TextField("contents", new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
-		doc.add(text);
 		
+		Field text = new TextField("contents", content, Field.Store.NO);
+		//Field text = new TextField("contents", new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
+		doc.add(text);
+				
 		
 		
 		if(writer.getConfig().getOpenMode() == OpenMode.CREATE)			//create new index

@@ -8,7 +8,6 @@ import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.StopwordAnalyzerBase;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.en.EnglishPossessiveFilter;
 import org.apache.lucene.analysis.en.PorterStemFilter;
 import org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
@@ -82,12 +81,15 @@ public final class MyAnalyzer extends StopwordAnalyzerBase {
    */
   @Override
   protected TokenStreamComponents createComponents(String fieldName) {
-    final Tokenizer source = new StandardTokenizer();
-    TokenStream result = new StandardFilter(source);
-    result = new EnglishPossessiveFilter(result);
-    result = new LowerCaseFilter(result);
-    result = new StopFilter(result, stopwords);
-    if(!stemExclusionSet.isEmpty())
+    final StandardTokenizer source = new StandardTokenizer();		//Tokenization
+    source.setMaxTokenLength(255);
+    TokenStream result = new StandardFilter(source);		//-----------------
+    //	result = new EnglishPossessiveFilter(result);			//-----------------
+    result = new LowerCaseFilter(result);					//NORMALIZATION
+    
+    result = new StopFilter(result, stopwords);				//Stop Word removal	
+    
+    if(!stemExclusionSet.isEmpty())							//Stemming
       result = new SetKeywordMarkerFilter(result, stemExclusionSet);
     result = new PorterStemFilter(result);
     return new TokenStreamComponents(source, result);

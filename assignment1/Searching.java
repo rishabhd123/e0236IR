@@ -9,20 +9,23 @@ import java.nio.file.Paths;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.Fields;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiFields;
+import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.store.FSDirectory;
-
 
 public class Searching {
 
   public static void main(String[] args) throws Exception {
     
-    String index = "/home/rishabh/workspace/E0236/indexR";
+    String index = "indexR";		 
     String field = "contents";
     int hitsPerPage = 10;
        
@@ -31,6 +34,21 @@ public class Searching {
     IndexSearcher searcher = new IndexSearcher(reader);
     Analyzer analyzer = new MyAnalyzer();
     
+    //searcher.setSimilarity(new ClassicSimilarity());		//Classic Similarity
+    //1.Start Retrieving number of Terms in vocabulary
+   /* 
+    Fields fields= MultiFields.getFields(reader);	//fetches various fields from the index (i.e fields that were indexed during indexing)
+    int count=0;
+       
+    for(String f:fields){							//Iterated over all the fields
+    	TermsEnum tIt= fields.terms(f).iterator();	//get all the terms belong to field f 
+    	while(tIt.next()!=null) count++;			//count number of terms in field f
+    }
+    System.out.println(count);
+    */
+    //2.End
+    
+        
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
     
     QueryParser parser = new QueryParser(field, analyzer);

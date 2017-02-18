@@ -33,7 +33,7 @@ public class Indexing
 	public static void main(String[] args) throws IOException
 	{	
 		
-		String docLocation = "/home/rishabh/workspace/E0236/conda root/Text";	//Location of directory which contains the files to be indexed
+		String docLocation = "/home/rishabh/workspace/E0236/conda root/Text//Science_and_technology_in_India/Indian inventors";	//Location of directory which contains the files to be indexed
 		String indexLocation = "indexR";
 		Path docDir = Paths.get(docLocation);
 		Directory iDir = FSDirectory.open(Paths.get(indexLocation)); 		//Creating Directory for storing index

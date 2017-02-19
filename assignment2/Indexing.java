@@ -26,7 +26,7 @@ import org.apache.lucene.store.FSDirectory;
 
 public class Indexing 
 {
-	
+	static int num_Topics = 40;
 	public static void main(String[] args) throws IOException
 	{	
 		
@@ -58,7 +58,7 @@ public class Indexing
 				
 		InputStream doc_topic_stream = Files.newInputStream(Paths.get("mallet_output/doc_topics.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(doc_topic_stream, StandardCharsets.UTF_8));
-		int num_Topics = 40;
+		
 		int num_docs = 2226;    //careful indexing is from zero  
 		double[] topic_prob_sum = new double[40];   //Sum of prob. for each topic(i.e sum( p(D_i | c) ))   i:for each document
 		String line, docDir;
@@ -114,6 +114,7 @@ public class Indexing
 				//writer.deleteDocuments(new Term("path",docDir.toString()));		
 				
 			}
+			
 		}
 		
 		

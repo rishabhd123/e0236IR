@@ -91,9 +91,9 @@ public final class MyAnalyzer extends StopwordAnalyzerBase {
     
     if(!stemExclusionSet.isEmpty())							//Stemming
     {
-    	//result = new SetKeywordMarkerFilter(result, stemExclusionSet);
+    	result = new SetKeywordMarkerFilter(result, stemExclusionSet);
     }
-    //result = new PorterStemFilter(result);
+    result = new PorterStemFilter(result);
     return new TokenStreamComponents(source, result);
   }
 

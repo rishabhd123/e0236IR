@@ -26,7 +26,7 @@ import org.apache.lucene.store.FSDirectory;
 
 public class Indexing 
 {
-	static int num_Topics = 40;
+	static int num_Topics = 100;
 	public static void main(String[] args) throws IOException
 	{	
 		
@@ -59,8 +59,8 @@ public class Indexing
 		InputStream doc_topic_stream = Files.newInputStream(Paths.get("mallet_output/doc_topics.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(doc_topic_stream, StandardCharsets.UTF_8));
 		
-		int num_docs = 2226;    //careful indexing is from zero  
-		double[] topic_prob_sum = new double[40];   //Sum of prob. for each topic(i.e sum( p(D_i | c) ))   i:for each document
+		int num_docs = 36459;    //careful indexing is from zero  
+		double[] topic_prob_sum = new double[100];   //Sum of prob. for each topic(i.e sum( p(D_i | c) ))   i:for each document
 		String line, docDir;
 		
 		for(int i=0;i<num_docs;i++){				//generating conditional probability sum( p(D_i | c) ) for each c(topic)
@@ -80,6 +80,16 @@ public class Indexing
 			//System.out.println(line);
 			String[] lineCompo = line.split("\\s+");
 			docDir = lineCompo[1].substring(5);
+			
+			if(docDir.contains("#")){
+				System.out.println(docDir);
+				String[] a = docDir.split("#");
+				String b="";
+				for(String s:a){
+					b += " "+s;
+					}
+					docDir = b.substring(1);
+				}
 			String doc_topic_prob = "";
 			for(int j=0;j<num_Topics;j++)
 				 doc_topic_prob += " " + String.valueOf( Double.parseDouble(lineCompo[j+2])/topic_prob_sum[j] );

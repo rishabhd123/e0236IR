@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -26,7 +27,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 
 public class Searching {
-	static int num_Topics = 40;
+	static int num_Topics = 100;
   public static void main(String[] args) throws Exception {
     
     String index = "indexR";		 
@@ -63,7 +64,6 @@ public class Searching {
     doPagingSearch(in, searcher, query, hitsPerPage, line);
     
     reader.close();
-    
     
     
   }
@@ -124,18 +124,14 @@ public class Searching {
         	}
         	t1 *= (t2/count);
         
-        }
+        }       
         
-        
-        
-        
-        
-        double finalScore = t1*tfidf;
+        double finalScore = t1 * tfidf;
         treeset.add( new Emp1(path, finalScore) );        
          
         termIt = T.keySet().iterator();
         t1 = 1.0;
-        double[] probTopicGivQue = new double[40];
+        double[] probTopicGivQue = new double[100];
         for(int k=0 ; k<num_Topics ; k++){
         	probTopicGivQue[k] = 1.0;
         }
@@ -148,7 +144,7 @@ public class Searching {
         		int topic = Integer.parseInt(topicsListForTerm[j]);
         		probTopicGivQue[topic] /= count;         		
         	}
-        	//t1 *= (t2/count);
+        	
         }
         
         for(int k=0 ;k<num_Topics ; k++){
@@ -166,6 +162,7 @@ public class Searching {
         
         
       }
+      
       InputStream stream = Files.newInputStream(Paths.get("mallet_output/topic_keys.txt"));
       BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8 ));
       PrintWriter out1 = new PrintWriter("output2/topic_wise_doc.txt");

@@ -56,7 +56,7 @@ public class Indexing
 	static void indexViaIndexTopicDoc(IndexWriter writer) throws IOException {
 		
 				
-		InputStream doc_topic_stream = Files.newInputStream(Paths.get("mallet_output/doc_topics.txt"));
+		InputStream doc_topic_stream = Files.newInputStream(Paths.get("mallet_output/doc_topics.out"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(doc_topic_stream, StandardCharsets.UTF_8));
 		
 		int num_docs = 36459;    //careful indexing is from zero  
@@ -73,7 +73,7 @@ public class Indexing
 		doc_topic_stream.close();
 		
 		//*** Very Important: why there is a need to initialize the InputStream again?  
-		doc_topic_stream = Files.newInputStream(Paths.get("mallet_output/doc_topics.txt"));
+		doc_topic_stream = Files.newInputStream(Paths.get("mallet_output/doc_topics.out"));
 		br = new BufferedReader(new InputStreamReader(doc_topic_stream, StandardCharsets.UTF_8));
 		for(int i=0;i<num_docs;i++){
 			line = br.readLine();
@@ -81,15 +81,19 @@ public class Indexing
 			String[] lineCompo = line.split("\\s+");
 			docDir = lineCompo[1].substring(5);
 			
-			if(docDir.contains("#")){
+			
+			if(docDir.contains("%20")){
+				docDir.replaceAll("%20", " ");
+				/*
 				System.out.println(docDir);
 				String[] a = docDir.split("#");
 				String b="";
 				for(String s:a){
 					b += " "+s;
 					}
-					docDir = b.substring(1);
+					docDir = b.substring(1);*/
 				}
+			
 			String doc_topic_prob = "";
 			for(int j=0;j<num_Topics;j++)
 				 doc_topic_prob += " " + String.valueOf( Double.parseDouble(lineCompo[j+2])/topic_prob_sum[j] );

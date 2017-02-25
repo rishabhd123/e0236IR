@@ -163,7 +163,7 @@ public class Searching {
         
       }
       
-      InputStream stream = Files.newInputStream(Paths.get("mallet_output/topic_keys.txt"));
+      InputStream stream = Files.newInputStream(Paths.get("mallet_output/topic_keys.out"));
       BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8 ));
       PrintWriter out1 = new PrintWriter("output2/topic_wise_doc.txt");
       String print = "";  // Initializing for storing topic wise ranked docs
@@ -221,7 +221,7 @@ public class Searching {
 	  
 	  for(String s:terms){
 		  int count=0;
-		  stream = Files.newInputStream(Paths.get("mallet_output/topic_keys.txt"));
+		  stream = Files.newInputStream(Paths.get("mallet_output/topic_keys.out"));
 		  br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 		  String topicList = "";
 		  for(int i=0; i < num_Topics ; i++ ){

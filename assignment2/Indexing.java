@@ -59,12 +59,14 @@ public class Indexing
 		InputStream doc_topic_stream = Files.newInputStream(Paths.get("mallet_output/doc_topics.out"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(doc_topic_stream, StandardCharsets.UTF_8));
 		
-		int num_docs = 36459;    //careful indexing is from zero  
+		//int num_docs = 36459;    //careful indexing is from zero  
 		double[] topic_prob_sum = new double[100];   //Sum of prob. for each topic(i.e sum( p(D_i | c) ))   i:for each document
 		String line, docDir;
 		
-		for(int i=0;i<num_docs;i++){				//generating conditional probability sum( p(D_i | c) ) for each c(topic)
+				
+		while(true){	  			//for(int i=0;i<num_docs;i++)			//generating conditional probability sum( p(D_i | c) ) for each c(topic)
 			line = br.readLine();
+			if(line==null) break;
 			String[] lineCompo = line.split("\\s+");			
 			for(int j=0;j<num_Topics;j++){
 				topic_prob_sum[j] += Double.parseDouble(lineCompo[j+2]);
@@ -75,17 +77,18 @@ public class Indexing
 		//*** Very Important: why there is a need to initialize the InputStream again?  
 		doc_topic_stream = Files.newInputStream(Paths.get("mallet_output/doc_topics.out"));
 		br = new BufferedReader(new InputStreamReader(doc_topic_stream, StandardCharsets.UTF_8));
-		for(int i=0;i<num_docs;i++){
+		while(true){			//for(int i=0;i<num_docs;i++)
 			line = br.readLine();
+			if(line==null) break;
 			//System.out.println(line);
 			String[] lineCompo = line.split("\\s+");
 			docDir = lineCompo[1].substring(5);
 			
 			
 			if(docDir.contains("%20")){
-				docDir.replaceAll("%20", " ");
-				/*
+				docDir = docDir.replaceAll("%20", " ");
 				System.out.println(docDir);
+				/*
 				String[] a = docDir.split("#");
 				String b="";
 				for(String s:a){

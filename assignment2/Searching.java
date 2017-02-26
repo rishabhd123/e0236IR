@@ -53,27 +53,34 @@ public class Searching {
     */
     //2.End
     
-        
-    BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+    InputStream  stream = Files.newInputStream(Paths.get("library/Evaluation/Queries.csv"));
+    BufferedReader in = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
     
     QueryParser parser = new QueryParser(field, analyzer);
-    System.out.println("Enter query: ");
-    String line = in.readLine();
+    //System.out.println("Enter query: ");
+    String line,qResult = "";
+    while(true){    			//Modified this segment for A-II evaluation.
+    line = in.readLine();		
+    if(line == null) break;
     Query query = parser.parse(line);
     System.out.println("Searching for: " + query.toString(field));
-    doPagingSearch(in, searcher, query, hitsPerPage, line);
+    qResult += doPagingSearch(in, searcher, query, hitsPerPage, line) + "\n";    
+    }
     
+    PrintWriter out3 = new PrintWriter("library/Evaluation/My_Results.txt");  
+    out3.print(qResult.trim());
+    out3.close();
     reader.close();
     
     
   }
 
   
-  static void doPagingSearch(BufferedReader in, IndexSearcher searcher, Query query, 
+  static String doPagingSearch(BufferedReader in, IndexSearcher searcher, Query query, 
                                      int hitsPerPage, String strQuery) throws IOException {
 	
 	
-	int docsToBeRet = 100;
+	int docsToBeRet = 25;
     // Collect enough docs to show 5 pages
     TopDocs results = searcher.search(query, 100);  //5 * hitsPerPage
     ScoreDoc[] hits = results.scoreDocs;
@@ -162,11 +169,12 @@ public class Searching {
         
         
       }
-      
+      String print;
+      /*   // Initializing for storing topic wise ranked docs
       InputStream stream = Files.newInputStream(Paths.get("mallet_output/topic_keys.out"));
       BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8 ));
       PrintWriter out1 = new PrintWriter("output2/topic_wise_doc.txt");
-      String print = "";  // Initializing for storing topic wise ranked docs
+      print = "";  // Initializing for storing topic wise ranked docs
       for(int p=0; p< num_Topics ; p++ ){
     	  String[] t = br.readLine().split("\\s+");
     	  String words = t[2]+" "+t[3]+" "+t[4]+" "+t[5]+" "+t[6];
@@ -191,8 +199,11 @@ public class Searching {
       out1.close();
       stream.close();
       br.close();
+      */
       
       
+      
+      /*    //output top 100 docs acc to new ranking scheme
       print  = ""; //Re initializing for storing docs ranked by new ranking scheme
       
       for(Emp1 e:treeset) {
@@ -200,14 +211,31 @@ public class Searching {
     	  //System.out.println(e.docId);
       }
       
-      PrintWriter out2 = new PrintWriter("output2/Top100doc.txt");  //output top 100 dics acc to new ranking scheme
+      PrintWriter out2 = new PrintWriter("output2/Top100doc.txt");  //output top 100 docs acc to new ranking scheme
       out2.print(print);
       out2.close();
-    	  
-    	     
+    	*/
       
+      
+      print  = strQuery+","; //Re initializing for storing docID(i.e. 1425786) ranked by new ranking scheme for  Evaluation
+      String temp1,temp2;
+      int ind;
+      for(Emp1 e:treeset) {
+    	  temp1 = e.docId;
+    	  ind = temp1.indexOf(".ece");
+    	  temp2 = temp1.substring(ind-7, ind-1);
+    	  
+    	  print += temp2 + " ";
+    	  //System.out.println(e.docId);
+      }
+      
+      
+    	     
+      return print.trim();
       
   }
+  
+  
   
   
   static Hashtable<String, String> topicGivenTermProb(String query) throws IOException{
@@ -245,12 +273,12 @@ public class Searching {
 	  }
 	  
 	  
-	  PrintWriter out3 = new PrintWriter("output2/top_k_topics.txt");
+	  PrintWriter out4 = new PrintWriter("output2/top_k_topics.txt");
 	  
 	  //System.out.println("Topics Relevant to "+ query + "\n" + topicsRelevantToQuery);
 	  
-	  out3.print(topicsRelevantToQuery);
-	  out3.close();
+	  out4.print(topicsRelevantToQuery);
+	  out4.close();
 	  System.out.println("Topics Relevant to "+ query + "\n" + topicsRelevantToQuery);
 	  return T;
   }
